@@ -27,10 +27,11 @@ public class Solution {
 		
 		public char getPosition(int[] position)
 		{
-			if ((position[0] < 0) || (position[0] >= size) || (position[1] < 0) || (position[1] >= size))
+			try {
+				return grid[position[0]][position[1]];
+			} catch (Exception e){
 				return 'X';
-			
-			return grid[position[0]][position[1]];
+			}
 		}
 
 		public void setVisited(int[] position, int nStep)
@@ -57,6 +58,7 @@ public class Solution {
 		private int path[][] = new int[MAXALLOWEDSTEPS][2];
 		private int shortenPath[][] = new int[MAXALLOWEDSTEPS][2];
 		private int nStep_ShortenPath = MAXALLOWEDSTEPS;
+		public int[][] roadmapMin = new int[MAXALLOWEDSTEPS][2];
 		private int nRoadmap_min = MAXALLOWEDSTEPS;
 		private int nStep = 0;
 		public int[][] roadmap = new int[MAXALLOWEDSTEPS][2];
@@ -120,6 +122,12 @@ public class Solution {
 						shortenPath[i][0] = newPath[i][0];
 						shortenPath[i][1] = newPath[i][1];
 					}
+					for (int i = 0; i < nRoadmap_min; i++)
+					{
+						roadmapMin[i][0] = roadmap[i][0];
+						roadmapMin[i][1] = roadmap[i][1];
+					}
+					
 					return true;
 				}
 			}
@@ -162,22 +170,23 @@ public class Solution {
 			if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
 					goNextStep(position, map);
 			position[X]--;// center
+						
+			position[Y]++;// go down
+			if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
+				goNextStep(position, map);
+			position[Y]--;// center
 			
 			position[Y]--;// go up
 			if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
 				goNextStep(position, map);
 			position[Y]++;// center
 			
+			
 			position[X]--;// go left
 			if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
 				goNextStep(position, map);
 			position[X]++;// center
-			
-			position[Y]++;// go down
-			if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
-				goNextStep(position, map);
-			position[Y]--;// center
-				
+
 			return path;
 		}
 		
@@ -200,14 +209,12 @@ public static void main(String args[]) {
 	}catch(IOException e){}
 }
 	public void execute() throws IOException {
-		long past = Calendar.getInstance().getTimeInMillis();
-		
 		BufferedReader br = new BufferedReader(new InputStreamReader( System.in ) );
 		
 		Knight knight = new Knight();
 		int mapSize = 0;
 		Map map = null;
-		String cursor;
+		String cursor = "";
     	
 		if (1 == 0)
 		{
@@ -232,51 +239,85 @@ public static void main(String args[]) {
 	    	map.castle[0] = (int) (new Integer(positions[2]));
 	    	map.castle[1] = (int) (new Integer(positions[3]));
 		} else {
-			map = new Map(40);
-			int i = 0;
-			map.grid[i] = new String("...X......XX.X...........XX....X.XX.....").toCharArray(); i++;
-			map.grid[i] = new String(".X..............X...XX..X...X........X.X").toCharArray(); i++;
-			map.grid[i] = new String("......X....X....X.........X...........X.").toCharArray(); i++;
-			map.grid[i] = new String(".X.X.X..X........X.....X.X...X.....X..X.").toCharArray(); i++;
-			map.grid[i] = new String("....X.X.X...X..........X..........X.....").toCharArray(); i++;
-			map.grid[i] = new String("..X......X....X....X...X....X.X.X....XX.").toCharArray(); i++;
-			map.grid[i] = new String("...X....X.......X..XXX.......X.X.....X..").toCharArray(); i++;
-			map.grid[i] = new String("...X.X.........X.X....X...X.........X...").toCharArray(); i++;
-			map.grid[i] = new String("XXXX..X......X.XX......X.X......XX.X..XX").toCharArray(); i++;
-			map.grid[i] = new String(".X........X....X.X......X..X....XX....X.").toCharArray(); i++;
-			map.grid[i] = new String("...X.X..X.X.....X...X....X..X....X......").toCharArray(); i++;
-		   map.grid[i] = new String("....XX.X.....X.XX.X...X.X.....X.X.......").toCharArray(); i++;
-		   map.grid[i] = new String(".X.X.X..............X.....XX..X.........").toCharArray(); i++;
-		   map.grid[i] = new String("..X...............X......X........XX...X").toCharArray(); i++;
-		   map.grid[i] = new String(".X......X...X.XXXX.....XX...........X..X").toCharArray(); i++;
-		   map.grid[i] = new String("...X....XX....X...XX.X..X..X..X.....X..X").toCharArray(); i++;
-		   map.grid[i] = new String("...X...X.X.....X.....X.....XXXX.........").toCharArray(); i++;
-		   map.grid[i] = new String("X.....XX..X.............X.XX.X.XXX......").toCharArray(); i++;
-		   map.grid[i] = new String(".....X.X..X..........X.X..X...X.X......X").toCharArray(); i++;
-		   map.grid[i] = new String("...X.....X..X.............X......X..X..X").toCharArray(); i++;
-		   map.grid[i] = new String("........X.....................X....X.X..").toCharArray(); i++;
-		   map.grid[i] = new String("..........X.....XXX...XX.X..............").toCharArray(); i++;
-		   map.grid[i] = new String("........X..X..........X.XXXX..X.........").toCharArray(); i++;
-		   map.grid[i] = new String("..X..X...X.......XX...X.....X...XXX..X..").toCharArray(); i++;
-		   map.grid[i] = new String(".X.......X..............X....X...X....X.").toCharArray(); i++;
-		   map.grid[i] = new String(".................X.....X......X.....X...").toCharArray(); i++;
-		   map.grid[i] = new String(".......X.X.XX..X.XXX.X.....X..........X.").toCharArray(); i++;
-		   map.grid[i] = new String("X..X......X..............X..X.X.......X.").toCharArray(); i++;
-		   map.grid[i] = new String("X........X.....X.....X....XX.......XX...").toCharArray(); i++;
-		   map.grid[i] = new String("X.....X.................X.....X..X...XXX").toCharArray(); i++;
-		   map.grid[i] = new String("XXX..X..X.X.XX..X....X.....XXX..X......X").toCharArray(); i++;
-		   map.grid[i] = new String("..........X.....X.....XX................").toCharArray(); i++;
-		   map.grid[i] = new String("..X.........X..X.........X...X.....X....").toCharArray(); i++;
-		   map.grid[i] = new String(".X.X....X...XX....X...............X.....").toCharArray(); i++;
-		   map.grid[i] = new String(".X....X....XX.XX........X..X............").toCharArray(); i++;
-		   map.grid[i] = new String("X...X.X................XX......X..X.....").toCharArray(); i++;
-		   map.grid[i] = new String("..X.X.......X.X..X.....XX.........X..X..").toCharArray(); i++;
-		   map.grid[i] = new String("........................X..X.XX..X......").toCharArray(); i++;
-		   map.grid[i] = new String("........X..X.X.....X.....X......X.......").toCharArray(); i++;
-		   map.grid[i] = new String(".X..X....X.X......XX....................").toCharArray(); i++;
-			
-			cursor = "34 28 16 8"; // result 9
+			int ej = 1;
+			int i;
+			switch(ej)
+			{
+			case 1:
+				map = new Map(40);
+				i = 0;
+				map.grid[i] = new String("...X......XX.X...........XX....X.XX.....").toCharArray(); i++;
+				map.grid[i] = new String(".X..............X...XX..X...X........X.X").toCharArray(); i++;
+				map.grid[i] = new String("......X....X....X.........X...........X.").toCharArray(); i++;
+				map.grid[i] = new String(".X.X.X..X........X.....X.X...X.....X..X.").toCharArray(); i++;
+				map.grid[i] = new String("....X.X.X...X..........X..........X.....").toCharArray(); i++;
+				map.grid[i] = new String("..X......X....X....X...X....X.X.X....XX.").toCharArray(); i++;
+				map.grid[i] = new String("...X....X.......X..XXX.......X.X.....X..").toCharArray(); i++;
+				map.grid[i] = new String("...X.X.........X.X....X...X.........X...").toCharArray(); i++;
+				map.grid[i] = new String("XXXX..X......X.XX......X.X......XX.X..XX").toCharArray(); i++;
+				map.grid[i] = new String(".X........X....X.X......X..X....XX....X.").toCharArray(); i++;
+				map.grid[i] = new String("...X.X..X.X.....X...X....X..X....X......").toCharArray(); i++;
+			   map.grid[i] = new String("....XX.X.....X.XX.X...X.X.....X.X.......").toCharArray(); i++;
+			   map.grid[i] = new String(".X.X.X..............X.....XX..X.........").toCharArray(); i++;
+			   map.grid[i] = new String("..X...............X......X........XX...X").toCharArray(); i++;
+			   map.grid[i] = new String(".X......X...X.XXXX.....XX...........X..X").toCharArray(); i++;
+			   map.grid[i] = new String("...X....XX....X...XX.X..X..X..X.....X..X").toCharArray(); i++;
+			   map.grid[i] = new String("...X...X.X.....X.....X.....XXXX.........").toCharArray(); i++;
+			   map.grid[i] = new String("X.....XX..X.............X.XX.X.XXX......").toCharArray(); i++;
+			   map.grid[i] = new String(".....X.X..X..........X.X..X...X.X......X").toCharArray(); i++;
+			   map.grid[i] = new String("...X.....X..X.............X......X..X..X").toCharArray(); i++;
+			   map.grid[i] = new String("........X.....................X....X.X..").toCharArray(); i++;
+			   map.grid[i] = new String("..........X.....XXX...XX.X..............").toCharArray(); i++;
+			   map.grid[i] = new String("........X..X..........X.XXXX..X.........").toCharArray(); i++;
+			   map.grid[i] = new String("..X..X...X.......XX...X.....X...XXX..X..").toCharArray(); i++;
+			   map.grid[i] = new String(".X.......X..............X....X...X....X.").toCharArray(); i++;
+			   map.grid[i] = new String(".................X.....X......X.....X...").toCharArray(); i++;
+			   map.grid[i] = new String(".......X.X.XX..X.XXX.X.....X..........X.").toCharArray(); i++;
+			   map.grid[i] = new String("X..X......X..............X..X.X.......X.").toCharArray(); i++;
+			   map.grid[i] = new String("X........X.....X.....X....XX.......XX...").toCharArray(); i++;
+			   map.grid[i] = new String("X.....X.................X.....X..X...XXX").toCharArray(); i++;
+			   map.grid[i] = new String("XXX..X..X.X.XX..X....X.....XXX..X......X").toCharArray(); i++;
+			   map.grid[i] = new String("..........X.....X.....XX................").toCharArray(); i++;
+			   map.grid[i] = new String("..X.........X..X.........X...X.....X....").toCharArray(); i++;
+			   map.grid[i] = new String(".X.X....X...XX....X...............X.....").toCharArray(); i++;
+			   map.grid[i] = new String(".X....X....XX.XX........X..X............").toCharArray(); i++;
+			   map.grid[i] = new String("X...X.X................XX......X..X.....").toCharArray(); i++;
+			   map.grid[i] = new String("..X.X.......X.X..X.....XX.........X..X..").toCharArray(); i++;
+			   map.grid[i] = new String("........................X..X.XX..X......").toCharArray(); i++;
+			   map.grid[i] = new String("........X..X.X.....X.....X......X.......").toCharArray(); i++;
+			   map.grid[i] = new String(".X..X....X.X......XX....................").toCharArray(); i++;
+				
+				cursor = "34 28 16 8"; // result 9
+				cursor = "39 0 39 3"; // result 3
+				break;
+			case 2:
+				map = new Map(3);
+				i = 0;
+				map.grid[i] = new String(".X.").toCharArray(); i++;
+				map.grid[i] = new String(".X.").toCharArray(); i++;
+				map.grid[i] = new String("...").toCharArray(); i++;
+				
+				cursor = "0 0 0 2"; // result 3
+				break;
+			case 3:
+				map = new Map(10);
+				i = 0;
+				map.grid[i] = new String(".X..XX...X").toCharArray(); i++;
+				map.grid[i] = new String("X.........").toCharArray(); i++;
+				map.grid[i] = new String(".X.......X").toCharArray(); i++;
+				map.grid[i] = new String("..........").toCharArray(); i++;
+				map.grid[i] = new String("........X.").toCharArray(); i++;
+				map.grid[i] = new String(".X...XXX..").toCharArray(); i++;
+				map.grid[i] = new String(".........X").toCharArray(); i++;
+				map.grid[i] = new String(".....X....").toCharArray(); i++;
+				map.grid[i] = new String(".....XX...").toCharArray(); i++;
+				map.grid[i] = new String(".....X...X").toCharArray(); i++;
+				cursor = "9 1 9 6"; // result 3
+				break;
+			}
 		}
+		
+		long past = Calendar.getInstance().getTimeInMillis();
 		
     	String[] positions = cursor.split(" ");
         int[] position = new int[2];
@@ -288,18 +329,19 @@ public static void main(String args[]) {
     	map.castle[1] = (int) (new Integer(positions[3]));
 
 		knight.goToCastleFrom(position, map);
-		/*
-		int[][] lines = knight.roadmap;
-		for (i = 0; i < lines.length; i++)
-		{
-			System.out.print(lines[i][0]);
-			System.out.print(", ");
-			System.out.println(lines[i][1]);
-		}
 
-    	*/
-    	System.out.println(new Integer(knight.nRoadmap).toString());
+		System.out.println(new Integer(knight.nRoadmap_min).toString());
     	long now = Calendar.getInstance().getTimeInMillis();
-		System.out.println(now - past);
+		
+		for (int i = 0; i < knight.nRoadmap_min; i++)
+		{
+			System.out.print("(");
+			System.out.print(knight.roadmapMin[i][0]);
+			System.out.print(", ");
+			System.out.print(knight.roadmapMin[i][1]);
+			System.out.print(") ");
+		}
+		System.out.println("");
+    	System.out.println(now - past);
 	}
 }

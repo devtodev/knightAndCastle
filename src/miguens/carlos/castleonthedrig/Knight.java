@@ -10,6 +10,7 @@ public class Knight {
 	private int path[][] = new int[MAXALLOWEDSTEPS][2];
 	private int shortenPath[][] = new int[MAXALLOWEDSTEPS][2];
 	private int nStep_ShortenPath = MAXALLOWEDSTEPS;
+	public int[][] roadmapMin = new int[MAXALLOWEDSTEPS][2];
 	private int nRoadmap_min = MAXALLOWEDSTEPS;
 	private int nStep = 0;
 	public int[][] roadmap = new int[MAXALLOWEDSTEPS][2];
@@ -77,10 +78,12 @@ public class Knight {
 				shortenPath[i][0] = newPath[i][0];
 				shortenPath[i][1] = newPath[i][1];
 			}
-			for (int i = nStep; i < shortenPath.length; i++)
+			for (int i = 0; i < nRoadmap_min; i++)
 			{
-				shortenPath[i] = new int[]{-1,-1};
+				roadmapMin[i][0] = roadmap[i][0];
+				roadmapMin[i][1] = roadmap[i][1];
 			}
+			
 			return true;
 		}
 		
