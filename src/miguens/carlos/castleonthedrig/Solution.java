@@ -36,13 +36,28 @@ public class Solution {
 
 		public void setVisited(int[] position, int nStep)
 		{
-			grid[position[0]][position[1]] = 'V';
-			
+			if (nStep < 10)
+				grid[position[0]][position[1]] = (char) ('0' + nStep);
+			else
+				grid[position[0]][position[1]] = (char) ('0'+ (nStep%10));
+			/*
+			for(int i = 0; i < size; i++)
+			{
+				System.out.println(new String(grid[i]));
+			}
+			System.out.println("");
+			*/
 		}
 
 		public void setFree(int[] position)
 		{
 			grid[position[0]][position[1]] = '.';
+			/*
+			for(int i = 0; i < size; i++)
+			{
+				System.out.println(new String(grid[i]));
+			}
+			System.out.println("");*/
 		}
 		
 		
@@ -114,7 +129,7 @@ public class Solution {
 			{
 				stepsToRoadmap(newPath);
 				if (nRoadmap < nRoadmap_min)
-				{
+				{						
 					nStep_ShortenPath = nStep;
 					nRoadmap_min = nRoadmap;
 					for (int i = 0; i < nStep; i++)
@@ -146,6 +161,14 @@ public class Solution {
 				nStep++;
 				if ((map.castle[0] == position[0]) && (map.castle[1] == position[1]))
 				{
+					// print path
+					for(int i = 0; i < map.size; i++)
+					{
+						System.out.println(new String(map.grid[i]));
+					}
+					System.out.println("");
+
+					
 					castleFounded(path);
 					map.setFree(position);
 					path[nStep][X] = -1;
@@ -166,27 +189,74 @@ public class Solution {
 		}
 		
 		private int[][] goToCastle(int[] position, Map map) {
-			position[X]++;// go right
-			if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
-					goNextStep(position, map);
-			position[X]--;// center
+			char[] order = new char[4];
+			// choice direction
+			int deltaX = map.castle[X] - position[X];
+			int deltaY = map.castle[Y] - position[Y];
+			
+			
+			if (Math.abs(deltaX) > Math.abs(deltaY))
+			{
+				if (deltaX > 0)
+				{
+					if (deltaY > 0)
+						order = new char[]{'R','D','U','L'};
+					else
+						order = new char[]{'R','U','D','L'};
+				} else {
+					if (deltaY > 0)
+						order = new char[]{'L','D','U','R'};
+					else
+						order = new char[]{'L','U','D','R'};
+				} 
+			} else {
+				if (deltaY > 0)
+				{
+					if (deltaX > 0)
+						order = new char[]{'D','R','L','U'};
+					else
+						order = new char[]{'D','L','R','U'};
+				} else {
+					if (deltaX > 0)
+						order = new char[]{'U','R','L','D'};
+					else
+						order = new char[]{'U','L','R','D'};
+				} 
+			}
+			
+			for (int s = 0; s < 4; s++)
+			{
+				switch (order[s])
+				{
+					case 'R':
+						position[X]++;// go right
+						if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
+								goNextStep(position, map);
+						position[X]--;// center
+						break;
+					case 'D':
+						position[Y]++;// go down
+						if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
+							goNextStep(position, map);
+						position[Y]--;// center
+						break;
+					
+					case 'U':
+						position[Y]--;// go up
+						if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
+							goNextStep(position, map);
+						position[Y]++;// center
+						break;
 						
-			position[Y]++;// go down
-			if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
-				goNextStep(position, map);
-			position[Y]--;// center
+					case 'L':
+						position[X]--;// go left
+						if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
+							goNextStep(position, map);
+						position[X]++;// center
+						break;
 			
-			position[Y]--;// go up
-			if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
-				goNextStep(position, map);
-			position[Y]++;// center
-			
-			
-			position[X]--;// go left
-			if (!((position[0] < 0) || (position[1] < 0) || (position[0] >= map.size) || (position[1] >= map.size) || (nStep >= nStep_ShortenPath)))
-				goNextStep(position, map);
-			position[X]++;// center
-
+				}
+			}
 			return path;
 		}
 		
@@ -288,7 +358,7 @@ public static void main(String args[]) {
 			   map.grid[i] = new String(".X..X....X.X......XX....................").toCharArray(); i++;
 				
 				cursor = "34 28 16 8"; // result 9
-				cursor = "39 0 39 3"; // result 3
+				//cursor = "39 0 39 3"; // result 3
 				break;
 			case 2:
 				map = new Map(3);
@@ -312,7 +382,7 @@ public static void main(String args[]) {
 				map.grid[i] = new String(".....X....").toCharArray(); i++;
 				map.grid[i] = new String(".....XX...").toCharArray(); i++;
 				map.grid[i] = new String(".....X...X").toCharArray(); i++;
-				cursor = "9 1 9 6"; // result 3
+				cursor = "9 6 9 1"; // result 3
 				break;
 			}
 		}
